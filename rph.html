@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Philippine Constitution Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        #quiz-area {
+            min-height: 150px;
+        }
+        .question {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            font-weight: bold;
+            line-height: 1.5;
+        }
+        .answer-container {
+            margin-top: 15px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #e9e9e9;
+        }
+        .answer-text {
+            font-style: italic;
+            font-weight: normal;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s;
+        }
+        #show-answer-btn {
+            background-color: #ffc107;
+            color: #333;
+        }
+        #show-answer-btn:hover {
+            background-color: #e0a800;
+        }
+        #next-question-btn {
+            background-color: #007bff;
+            color: white;
+        }
+        #next-question-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📚 Constitution Article & Section Quiz 🇵🇭</h1>
+    
+    <div id="quiz-area">
+        <p class="question" id="question-text">Click "Next Question" to start!</p>
+        
+        <div class="answer-container" id="answer-container" style="display: none;">
+            <p><strong>Answer:</strong></p>
+            <p class="answer-text" id="answer-text"></p>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <button id="show-answer-btn">Show Answer</button>
+        <button id="next-question-btn">Next Question</button>
+    </div>
+</div>
+
+<script>
+    // Data extracted from your PDF
+    const articleData = [
+        { article: 'Article I', title: 'National Territory', content: 'Defines the national territory of the Philippines, including land, waters, and airspace.' },
+        { article: 'Article II', title: 'Declaration of Principles and State Policies', content: 'Sets out the guiding principles and policies of the government.' },
+        { article: 'Article III', title: 'Bill of Rights', content: 'Guarantees the fundamental civil and political rights of all citizens.' },
+        { article: 'Article IV', title: 'Citizenship', content: 'Defines who are citizens of the Philippines and how citizenship is acquired or lost.' },
+        { article: 'Article V', title: 'Suffrage', content: 'Governs the right to vote and the conduct of elections.' },
+        { article: 'Article VI', title: 'The Legislative Department', content: 'Establishes the Congress (Senate and House of Representatives) and its powers.' },
+        { article: 'Article VII', title: 'The Executive Department', content: 'Defines the powers and duties of the President and Vice President.' },
+        { article: 'Article VIII', title: 'The Judicial Department', content: 'Creates the judiciary, including the Supreme Court and lower courts.' },
+        { article: 'Article IX', title: 'Constitutional Commissions', content: 'Civil Service Commission (CSC), Commission on Elections (COMELEC), Commission on Audit (COA)' },
+        { article: 'Article X', title: 'Local Government', content: 'Discusses the structure and autonomy of local governments.' },
+        { article: 'Article XI', title: 'Accountability of Public Officers', content: 'Provides rules on impeachment and ethical conduct of public officials.' },
+        { article: 'Article XII', title: 'National Economy and Patrimony', content: 'Deals with economic policies, resources, and ownership.' },
+        { article: 'Article XIII', title: 'Social Justice and Human Rights', content: 'Promotes social justice, human rights, labor, agrarian reform, and urban land reform.' },
+        { article: 'Article XIV', title: 'Education, Science and Technology, Arts, Culture, and Sports', content: 'Focuses on national development through education, culture, and science.' },
+        { article: 'Article XV', title: 'The Family', content: 'Recognizes the family as the foundation of the nation and protects marriage.' },
+        { article: 'Article XVI', title: 'General Provisions', content: 'Contains miscellaneous provisions (e.g., national symbols, the Armed Forces).' },
+        { article: 'Article XVII', title: 'Amendments or Revisions', content: 'Specifies how the Constitution can be changed.' },
+        { article: 'Article XVIII', title: 'Transitory Provisions', content: 'Covers the transition from the previous government to the new constitutional order.' },
+    ];
+
+    const billOfRightsSections = [
+        { section: 1, content: 'No person shall be deprived of life, liberty, or property without due process of law, nor shall any person be denied the equal protection of the laws.' },
+        { section: 2, content: 'The right of the people to be secure in their persons, houses, papers, and effects against unreasonable searches and seizures...' },
+        { section: 3, content: 'The privacy of communication and correspondence shall be inviolable...' },
+        { section: 4, content: 'No law shall be passed abridging the freedom of speech, of expression, or of the press...' },
+        { section: 5, content: 'No law shall be made respecting an establishment of religion, or prohibiting the free exercise thereof.' },
+        { section: 6, content: 'The liberty of abode and of changing the same... and the right to travel shall not be impaired...' },
+        { section: 7, content: 'The right of the people to information on matters of public concern shall be recognized.' },
+        { section: 8, content: 'The right of the people... to form unions, associations, or societies...' },
+        { section: 9, content: 'Private property shall not be taken for public use without just compensation.' },
+        { section: 10, content: 'No law impairing the obligation of contracts shall be passed.' },
+        { section: 11, content: 'Free access to the courts and quasi-judicial bodies and adequate legal assistance...' },
+        { section: 12, content: 'Rights of person under custodial investigation (e.g., right to remain silent, counsel, no torture, inadmissible evidence).' },
+        { section: 13, content: 'All persons... shall be bailable by sufficient sureties, or be released on recognizance...' },
+        { section: 14, content: 'Rights of the accused in criminal prosecutions (e.g., presumption of innocence, speedy trial, confront witnesses).' },
+        { section: 15, content: 'The privilege of the writ of habeas corpus shall not be suspended except in cases of invasion or rebellion...' },
+        { section: 16, content: 'All persons shall have the right to a speedy disposition of their cases...' },
+        { section: 17, content: 'No person shall be compelled to be a witness against himself.' },
+        { section: 18, content: 'No person shall be detained solely by reason of his political beliefs... No involuntary servitude...' },
+        { section: 19, content: 'Prohibition against excessive fines, cruel, degrading or inhuman punishment. Death penalty provision.' },
+        { section: 20, content: 'No person shall be imprisoned for debt or non-payment of a poll tax.' },
+        { section: 21, content: 'No person shall be twice put in jeopardy of punishment for the same offense (Double Jeopardy).' },
+        { section: 22, content: 'No ex post facto law or bill of attainder shall be enacted.' },
+    ];
+
+    let currentQuestion = null;
+
+    function getRandomQuestion() {
+        // 50% chance for an Article (Title/Number) question, 50% chance for a Section question
+        const type = Math.random() < 0.5 ? 'article' : 'section'; 
+        
+        if (type === 'article') {
+            const index = Math.floor(Math.random() * articleData.length);
+            const item = articleData[index];
+            // 50% chance for a forward (number to title) or reverse (title to number) question
+            const isReverse = Math.random() < 0.5; 
+
+            if (isReverse) {
+                // Question: "What is the article with the title 'The Legislative Department'?"
+                return {
+                    question: `Which article is titled: **${item.title}**?`,
+                    answer: `${item.article}: ${item.title} (${item.content})`,
+                    key: `article-r-${index}`
+                };
+            } else {
+                // Question: "What is the title of Article VI?"
+                return {
+                    question: `What is the title of **${item.article}**?`,
+                    answer: `${item.title} (${item.content})`,
+                    key: `article-f-${index}`
+                };
+            }
+        } else {
+            // Section questions are only for Article III - Bill of Rights
+            const index = Math.floor(Math.random() * billOfRightsSections.length);
+            const item = billOfRightsSections[index];
+            
+            // Question: "What is the content/subject of Section 4 of Article III (Bill of Rights)?"
+            return {
+                question: `What is the core subject of **Section ${item.section} of Article III (Bill of Rights)**?`,
+                answer: item.content,
+                key: `section-${index}`
+            };
+        }
+    }
+
+    function displayQuestion() {
+        currentQuestion = getRandomQuestion();
+        
+        const questionTextElement = document.getElementById('question-text');
+        const answerContainer = document.getElementById('answer-container');
+        const answerTextElement = document.getElementById('answer-text');
+
+        // Update the question
+        questionTextElement.innerHTML = currentQuestion.question;
+        
+        // Hide and clear the answer
+        answerContainer.style.display = 'none';
+        answerTextElement.textContent = '';
+    }
+
+    function showAnswer() {
+        if (!currentQuestion) return;
+        
+        const answerContainer = document.getElementById('answer-container');
+        const answerTextElement = document.getElementById('answer-text');
+
+        answerTextElement.textContent = currentQuestion.answer;
+        answerContainer.style.display = 'block';
+    }
+
+    // Event Listeners
+    document.getElementById('next-question-btn').addEventListener('click', displayQuestion);
+    document.getElementById('show-answer-btn').addEventListener('click', showAnswer);
+
+    // Initial load
+    displayQuestion();
+</script>
+
+</body>
+</html>
